@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Bhavika | A Special Journey</title>
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --primary: #e0aaff;
+            --accent: #ff85a1;
+            --bg: #030303;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Playfair Display', serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: var(--font-main);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Custom Cursor */
+        #cursor {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.1s;
+        }
+        #cursor-follower {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+
+        /* Background Canvas */
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            filter: blur(1px);
+        }
+
+        /* Overlay Layout */
+        .container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        .section {
+            position: absolute;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: 3rem 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to bottom, #fff, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: white;
+            color: black;
+            padding: 1rem 2rem;
+            border-radius: 3rem;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.3s all;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transition: 0.3s;
+        }
+        .dot.active {
+            background: var(--primary);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        /* Special Styling for specific names */
+        .bhavika-text {
+            color: var(--accent);
+            font-style: italic;
+            -webkit-text-fill-color: var(--accent);
+        }
+
+        .heart {
+            color: #ff4d4d;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .yash-signature {
+            margin-top: 2rem;
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 1.2rem;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+    <canvas id="canvas"></canvas>
+
+    <div class="progress-container">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
+
+    <main class="container">
+        <!-- Section 1: Intro -->
+        <section class="section" id="step1">
+            <div class="glass-card">
+                <i data-lucide="sparkles" style="color: var(--primary); margin-bottom: 1rem;"></i>
+                <p>Today is a date the stars have been waiting for...</p>
+                <h1>Hello, <span class="bhavika-text">Bhavika</span></h1>
+                <button class="btn" onclick="goToStep(2)">
+                    Open the message <i data-lucide="arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 2: Heartfelt Message -->
+        <section class="section" id="step2">
+            <div class="glass-card">
+                <h2>The World is Brighter</h2>
+                <p>Because you're in it. Every conversation with you is a memory I cherish, and every laugh of yours is a melody. Bhavika, you have this incredible way of making everything feel special just by being yourself.</p>
+                <button class="btn" onclick="goToStep(3)">
+                    Continue <i data-lucide="heart"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 3: The Wish -->
+        <section class="section" id="step3">
+            <div class="glass-card">
+                <i data-lucide="moon" style="color: var(--primary); margin-bottom: 1rem;"></i>
+                <h2>2025 & Beyond</h2>
+                <p>May this year bring you the kind of happiness that makes your eyes sparkle. May you find success in every path you choose and love in every corner you turn.</p>
+                <p>You deserve nothing but the absolute best.</p>
+                <button class="btn" onclick="goToStep(4)">
+                    Make a wish <i data-lucide="wand-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 4: The Finale -->
+        <section class="section" id="step4">
+            <div class="glass-card">
+                <h1>Happy Birthday!</h1>
+                <p>Wishing you a day as stunning and beautiful as you are.</p>
+                
+                <div class="yash-signature">
+                    With all my heart,<br>
+                    <span style="font-size: 1.5rem; color: var(--primary);">— Yash</span>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button class="btn" style="background: var(--accent); color: white;" onclick="burst()">
+                        Celebrate! <i data-lucide="party-popper"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Custom Cursor Logic
+        const cursor = document.getElementById('cursor');
+        const follower = document.getElementById('cursor-follower');
+        
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, {x: e.clientX, y: e.clientY, duration: 0});
+            gsap.to(follower, {x: e.clientX - 16, y: e.clientY - 16, duration: 0.3});
+        });
+
+        // Background Particles
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.velocity = Math.random() * 0.5 + 0.2;
+                this.alpha = Math.random() * 0.5;
+            }
+            update() {
+                this.y -= this.velocity;
+                if (this.y < -10) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = `rgba(224, 170, 255, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for(let i=0; i<150; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Journey Logic
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        function goToStep(step) {
+            const dots = document.querySelectorAll('.dot');
+            
+            // Outgoing animation
+            gsap.to(`#step${currentStep}`, {
+                opacity: 0, 
+                y: -50, 
+                visibility: 'hidden', 
+                duration: 0.8,
+                ease: "power4.inOut"
+            });
+
+            // Incoming animation
+            gsap.fromTo(`#step${step}`, 
+                { opacity: 0, y: 50, visibility: 'hidden' },
+                { 
+                    opacity: 1, 
+                    y: 0, 
+                    visibility: 'visible', 
+                    duration: 1, 
+                    delay: 0.5,
+                    ease: "power4.out" 
+                }
+            );
+
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === step - 1);
+            });
+
+            currentStep = step;
+
+            if(step === 4) {
+                setTimeout(burst, 800);
+            }
+        }
+
+        function burst() {
+            const count = 200;
+            const defaults = {
+                origin: { y: 0.7 },
+                colors: ['#e0aaff', '#ff85a1', '#ffffff']
+            };
+
+            function fire(particleRatio, opts) {
+                confetti({
+                    ...defaults,
+                    ...opts,
+                    particleCount: Math.floor(count * particleRatio)
+                });
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+
+        // Initialize First Step
+        window.onload = () => {
+            gsap.set(".section", { visibility: 'hidden', opacity: 0 });
+            goToStep(1);
+        };
+    </script>
+</body>
+</html>
